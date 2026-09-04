@@ -44,8 +44,9 @@ h1{font-size:29px;margin:14px 0 40px;letter-spacing:.02em}
 .lede{font-family:var(--mincho);font-size:22px;line-height:2.05;
   color:var(--indigo);margin:0 0 8px;letter-spacing:.01em}
 .lede em{font-style:normal;border-bottom:2px solid var(--indigo);padding-bottom:2px}
-.lede-note{font-size:13.5px;color:var(--ink-2);margin:18px 0 40px;max-width:33em}
-.facts{border-top:1px solid var(--rule);margin:0 0 36px}
+.lede-note{font-size:13.5px;color:var(--ink-2);margin:18px 0 30px;max-width:33em}
+.about{font-size:13.5px;color:var(--ink-2);margin:44px 0 32px;max-width:33em}
+.facts{border-top:1px solid var(--rule);margin:0}
 .fact{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule-soft)}
 .fact dt{flex:0 0 5.5em;color:var(--ink-2);font-size:13px;margin:0}
 .fact dd{margin:0;font-size:13.5px;flex:1}
@@ -181,17 +182,18 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
   <h1>セクハラ セルフチェック</h1>
 
   <p class="lede">悪意がなかったことは、<em>問題がなかった証明</em>にはなりません。</p>
-  <p class="lede-note">セクハラに当たるかどうかは、受け手の感じ方を重視しつつ、平均的な労働者の感じ方なども踏まえて、状況ごとに判断されます。つまり、自分の意図だけでは判断できません。<br>前半は日ごろのふるまい、後半は「よかれと思って」の考え方を聞きます。後半に点が付く人は、まだ何も起きていなくても、起きたときに自分では気づけない位置にいます。</p>
+  <p class="lede-note">28問、およそ7分。回答はこの画面の中だけで処理され、どこにも送信・保存されません。</p>
+
+  <button class="btn" id="start">チェックを始める</button>
+
+  <p class="about">セクハラに当たるかどうかは、受け手の感じ方を重視しつつ、平均的な労働者の感じ方なども踏まえて、状況ごとに判断されます。つまり、自分の意図だけでは判断できません。<br>
+  前半は日ごろのふるまい、後半は「よかれと思って」の考え方を聞きます。後半に点が付く人は、まだ何も起きていなくても、起きたときに自分では気づけない位置にいます。</p>
 
   <dl class="facts">
-    <div class="fact"><dt>設問</dt><dd>28問、所要およそ7分</dd></div>
     <div class="fact"><dt>結果</dt><dd>ふるまいと考え方を、別々に集計して表示します</dd></div>
-    <div class="fact"><dt>回答</dt><dd>この画面の中だけで処理され、どこにも送信・保存されません</dd></div>
     <div class="fact"><dt>範囲</dt><dd>セクハラを中心に、性別役割の押しつけ、育児休業に関する言動、アウティングなど、関連するハラスメントを含みます</dd></div>
     <div class="fact"><dt>位置づけ</dt><dd>厚生労働省の指針を参考にした自己点検です。配点と判定はこのチェック独自の目安で、公的な判定基準ではありません</dd></div>
   </dl>
-
-  <button class="btn" id="start">チェックを始める</button>
 </section>
 
 <div id="check" class="hidden">
