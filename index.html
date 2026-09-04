@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DEDラボ</title>
-<meta name="description" content="AIと一緒に作った自己点検ツールや学習ツールの置き場です。">
+<title>職場のセクハラ セルフチェック</title>
+<meta name="description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化する自己点検ツールです。回答は端末の外に出ません。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://digitalemotiondesign-lab.github.io/">
+<meta property="og:url" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/">
 <meta property="og:site_name" content="DEDラボ">
-<meta property="og:title" content="DEDラボ">
-<meta property="og:description" content="AIと一緒に作った自己点検ツールや学習ツールの置き場です。">
+<meta property="og:title" content="セクハラ セルフチェック — 「悪気はなかった」を点検する">
+<meta property="og:description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化します。回答は端末の外に出ません。">
+<meta property="og:image" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/ogp.png">
+<meta name="twitter:title" content="セクハラ セルフチェック — 「悪気はなかった」を点検する">
+<meta name="twitter:description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化します。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
@@ -18,7 +25,8 @@
 :root{
   --paper:#E7E9E3; --card:#FBFBF9;
   --ink:#1F2528; --ink-2:#5A6462; --ink-3:#8A928F;
-  --rule:#C9CDC4; --rule-soft:#DEE1DA; --indigo:#2F4E63;
+  --rule:#C9CDC4; --rule-soft:#DEE1DA;
+  --indigo:#2F4E63; --plum:#7E4B57; --moss:#4A6B54; --ochre:#8A6E2E;
   --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mincho:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
 }
@@ -26,72 +34,509 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.9;font-feature-settings:"palt" 1}
-.wrap{max-width:640px;margin:0 auto;padding:64px 22px 96px}
-.kicker{font-size:13px;color:var(--ink-2);letter-spacing:.08em;
+.wrap{max-width:640px;margin:0 auto;padding:0 22px calc(160px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:var(--mincho);font-weight:600;line-height:1.5;margin:0}
+
+.intro{padding-top:64px}
+.intro__kicker{font-size:13px;color:var(--ink-2);letter-spacing:.08em;
   border-top:2px solid var(--ink);padding-top:12px;display:inline-block}
-h1{font-family:var(--mincho);font-weight:600;font-size:29px;
-  margin:14px 0 26px;letter-spacing:.02em;line-height:1.5}
-.lede{font-size:14px;color:var(--ink-2);max-width:33em;margin:0 0 44px}
+h1{font-size:29px;margin:14px 0 40px;letter-spacing:.02em}
+.lede{font-family:var(--mincho);font-size:22px;line-height:2.05;
+  color:var(--indigo);margin:0 0 8px;letter-spacing:.01em}
+.lede em{font-style:normal;border-bottom:2px solid var(--indigo);padding-bottom:2px}
+.lede-note{font-size:13.5px;color:var(--ink-2);margin:18px 0 40px;max-width:33em}
+.facts{border-top:1px solid var(--rule);margin:0 0 36px}
+.fact{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule-soft)}
+.fact dt{flex:0 0 5.5em;color:var(--ink-2);font-size:13px;margin:0}
+.fact dd{margin:0;font-size:13.5px;flex:1}
 
-h2{font-family:var(--mincho);font-weight:600;font-size:17px;
-  border-bottom:1px solid var(--ink);padding-bottom:9px;margin:0 0 4px}
+.btn{font-family:var(--sans);font-size:15px;font-weight:500;
+  background:var(--indigo);color:#fff;border:1px solid var(--indigo);
+  padding:13px 30px;border-radius:3px;cursor:pointer;transition:background .15s ease}
+.btn:hover{background:#243D4E}
+.btn--ghost{background:transparent;color:var(--indigo)}
+.btn--ghost:hover{background:rgba(47,78,99,.07)}
+.btn:focus-visible,input:focus-visible+.opt,a:focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
 
-.tool{display:block;text-decoration:none;color:inherit;
-  padding:22px 0 20px;border-bottom:1px solid var(--rule-soft);
-  transition:background .12s}
-.tool:hover{background:rgba(47,78,99,.05);
-  box-shadow:-14px 0 0 rgba(47,78,99,.05),14px 0 0 rgba(47,78,99,.05)}
-.tool__name{font-family:var(--mincho);font-size:18px;color:var(--indigo);
-  margin:0 0 7px;line-height:1.5}
-.tool__desc{font-size:13.5px;color:var(--ink-2);margin:0}
-.tool__meta{font-size:12px;color:var(--ink-3);margin:8px 0 0}
+.bar{position:sticky;top:0;z-index:10;background:var(--paper);
+  border-bottom:1px solid var(--rule);padding:12px 0 11px;margin-bottom:8px}
+.bar__inner{max-width:640px;margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:14px}
+.bar__track{flex:1;height:3px;background:var(--rule)}
+.bar__fill{height:100%;background:var(--indigo);width:0;transition:width .3s ease}
+.bar__num{font-size:12.5px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
 
-.soon{padding:22px 0 20px;border-bottom:1px solid var(--rule-soft);color:var(--ink-3)}
-.soon__name{font-family:var(--mincho);font-size:18px;margin:0 0 7px;line-height:1.5}
-.soon__desc{font-size:13.5px;margin:0}
+.chap{margin:44px 0 0}
+.chap__head{display:flex;align-items:baseline;gap:12px;
+  border-bottom:1px solid var(--ink);padding-bottom:9px;margin-bottom:4px}
+.chap__no{font-family:var(--mincho);font-size:16px;color:var(--indigo)}
+.chap__title{font-size:17px}
+.chap__lead{font-size:13px;color:var(--ink-2);margin:12px 0 0;max-width:32em}
 
+.q{padding:20px 0 18px;border-bottom:1px solid var(--rule-soft)}
+.q.is-missing{background:rgba(126,75,87,.06);
+  box-shadow:-14px 0 0 rgba(126,75,87,.06),14px 0 0 rgba(126,75,87,.06)}
+.q__text{display:flex;gap:12px;margin-bottom:13px}
+.q__no{flex:0 0 auto;color:var(--ink-3);font-size:13px;padding-top:3px;
+  font-variant-numeric:tabular-nums;min-width:1.6em}
+.q__body{flex:1;font-size:14.5px;line-height:1.85}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-left:2.4em}
+.opts input{position:absolute;opacity:0;width:0;height:0}
+.opt{display:block;text-align:center;padding:9px 4px;font-size:13px;
+  background:var(--card);border:1px solid var(--rule);border-radius:2px;
+  cursor:pointer;color:var(--ink-2);transition:background .12s,color .12s}
+.opt:hover{background:#F2F3EF}
+input:checked+.opt{background:var(--indigo);border-color:var(--indigo);color:#fff}
+
+.submit{margin:40px 0 0;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.submit__note{font-size:13px;color:var(--plum)}
+
+.res__head{padding:56px 0 0}
+.res__label{font-size:13px;color:var(--ink-2);border-top:2px solid var(--ink);
+  padding-top:12px;display:inline-block}
+.verdict{font-family:var(--mincho);font-size:26px;line-height:1.6;margin:16px 0 14px}
+.verdict-sub{font-size:14px;color:var(--ink-2);max-width:32em;margin:0 0 34px}
+.lv-0{color:var(--moss)}.lv-1{color:var(--indigo)}.lv-2{color:var(--ochre)}.lv-3{color:var(--plum)}
+
+/* 4象限プロット */
+.plot{max-width:340px;margin:0 0 10px;position:relative;padding-left:22px}
+.plot__box{position:relative;padding-top:100%;background:var(--card);
+  border-left:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.plot__grid{position:absolute;inset:0}
+.plot__grid i{position:absolute}
+.plot__grid i.v{left:50%;top:0;bottom:0;border-left:1px dashed var(--rule)}
+.plot__grid i.h{bottom:50%;left:0;right:0;border-top:1px dashed var(--rule)}
+.plot__q{position:absolute;font-size:11.5px;color:var(--ink-3);line-height:1.5;
+  padding:8px 9px;max-width:46%}
+.plot__q.tl{left:0;top:0}.plot__q.tr{right:0;top:0;text-align:right}
+.plot__q.bl{left:0;bottom:0}.plot__q.br{right:0;bottom:0;text-align:right}
+.plot__q.on{color:currentColor;font-weight:700}
+.plot__dot{position:absolute;width:15px;height:15px;border-radius:50%;
+  background:currentColor;transform:translate(-50%,50%);
+  box-shadow:0 0 0 4px var(--card)}
+.plot__ax{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-3);margin-top:7px}
+.plot__ay{position:absolute;left:11px;top:50%;white-space:nowrap;
+  transform:translate(-50%,-50%) rotate(-90deg);
+  font-size:11.5px;color:var(--ink-3)}
+
+.axes{display:flex;gap:26px;flex-wrap:wrap;margin:26px 0 34px}
+.axis{flex:1 1 200px}
+.axis__name{font-size:12.5px;color:var(--ink-2);margin-bottom:5px}
+.axis__val{display:flex;align-items:baseline;gap:7px;margin-bottom:7px}
+.axis__val b{font-family:var(--mincho);font-size:30px;font-weight:600;line-height:1}
+.axis__val span{font-size:12.5px;color:var(--ink-2)}
+.axis__track{height:6px;background:var(--rule-soft)}
+.axis__fill{height:100%;background:currentColor}
+
+.alert{border-left:3px solid var(--plum);background:rgba(126,75,87,.07);
+  padding:16px 18px;margin:0 0 34px;font-size:13.5px}
+.alert b{font-weight:700;color:var(--plum)}
+
+h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;margin:44px 0 6px}
+.sec-note{font-size:13px;color:var(--ink-2);margin:12px 0 20px}
+.brk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule-soft)}
+.brk__name{flex:0 0 8.5em;font-size:13.5px}
+.brk__track{flex:1;height:8px;background:var(--rule-soft)}
+.brk__fill{height:100%;background:currentColor}
+.brk__num{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums;flex:0 0 3.6em;text-align:right}
+
+.item{padding:18px 0;border-bottom:1px solid var(--rule-soft)}
+.item__q{display:flex;gap:12px;font-size:14.5px;margin-bottom:8px}
+.item__q span{color:var(--ink-3);font-size:13px;min-width:1.6em;padding-top:2px}
+.item__a{font-size:13.5px;color:var(--ink-2);margin-left:2.4em;line-height:1.95}
+.item--grave{border-left:3px solid var(--plum);padding-left:14px;margin-left:-17px}
+
+.after{margin:44px 0 0;border-top:1px solid var(--rule);padding-top:8px}
+.after dt{font-family:var(--mincho);font-size:15px;margin:22px 0 6px}
+.after dd{margin:0;font-size:13.5px;color:var(--ink-2)}
 .foot{margin:52px 0 0;padding-top:18px;border-top:1px solid var(--rule);
   font-size:12px;color:var(--ink-3);line-height:1.9}
-.foot a{color:var(--indigo)}
-@media (max-width:520px){h1{font-size:25px}.wrap{padding-top:48px}}
+
+.hidden{display:none}
+@media (max-width:520px){
+  h1{font-size:25px}.lede{font-size:19px}.verdict{font-size:22px}
+  .opts{margin-left:0}.brk__name{flex:0 0 6.5em;font-size:12.5px}
+  .q__text{gap:8px}.q__no{min-width:1.2em}
+  .item__q{gap:8px}.item__q span{min-width:1.2em}.item__a{margin-left:1.9em}
+  .plot__q{font-size:10.5px;padding:7px}
+  .plot__ax{font-size:10.5px}
+  .wrap{padding-left:calc(26px + env(safe-area-inset-left,0px));
+        padding-right:calc(26px + env(safe-area-inset-right,0px))}
+  .bar__inner{padding-left:calc(26px + env(safe-area-inset-left,0px));
+              padding-right:calc(26px + env(safe-area-inset-right,0px))}
+  .q.is-missing{box-shadow:-18px 0 0 rgba(126,75,87,.06),18px 0 0 rgba(126,75,87,.06)}
+  .item--grave{margin-left:-17px}
+}
+@media (max-width:420px){
+  .opts{grid-template-columns:1fr;gap:5px}
+  .opt{text-align:left;padding:10px 14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{body{background:#fff}.bar,.btn,.submit{display:none}.q,.item{break-inside:avoid}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <p class="kicker">DIGITAL EMOTION DESIGN LAB</p>
-  <h1>DEDラボ</h1>
-  <p class="lede">AIと一緒に作った自己点検ツールや学習ツールを置いています。どれもブラウザの中だけで動きます。入力した内容がどこかに送信されることはありません。</p>
 
-  <h2>公開中</h2>
+<section id="intro" class="wrap intro">
+  <p class="intro__kicker">職場のハラスメント 自己点検</p>
+  <h1>セクハラ セルフチェック</h1>
 
-  <a class="tool" href="./sekuhara/">
-    <p class="tool__name">セクハラ セルフチェック</p>
-    <p class="tool__desc">28問。日ごろのふるまいと、「よかれと思って」の考え方を別々に集計します。行為には出ていないが前提のほうが危ない、という位置を可視化する作りです。</p>
-    <p class="tool__meta">所要7分／厚生労働省の指針を参考にした自己点検</p>
-  </a>
+  <p class="lede">悪意がなかったことは、<em>問題がなかった証明</em>にはなりません。</p>
+  <p class="lede-note">セクハラに当たるかどうかは、受け手の感じ方を重視しつつ、平均的な労働者の感じ方なども踏まえて、状況ごとに判断されます。つまり、自分の意図だけでは判断できません。<br>前半は日ごろのふるまい、後半は「よかれと思って」の考え方を聞きます。後半に点が付く人は、まだ何も起きていなくても、起きたときに自分では気づけない位置にいます。</p>
 
-  <!-- 新しいツールを足すときは、上の <a class="tool"> ブロックをコピーして
-       href とテキストを書き換えてください。フォルダを作って index.html を
-       入れるだけで、リンク先が生きます。 -->
+  <dl class="facts">
+    <div class="fact"><dt>設問</dt><dd>28問、所要およそ7分</dd></div>
+    <div class="fact"><dt>結果</dt><dd>ふるまいと考え方を、別々に集計して表示します</dd></div>
+    <div class="fact"><dt>回答</dt><dd>この画面の中だけで処理され、どこにも送信・保存されません</dd></div>
+    <div class="fact"><dt>範囲</dt><dd>セクハラを中心に、性別役割の押しつけ、育児休業に関する言動、アウティングなど、関連するハラスメントを含みます</dd></div>
+    <div class="fact"><dt>位置づけ</dt><dd>厚生労働省の指針を参考にした自己点検です。配点と判定はこのチェック独自の目安で、公的な判定基準ではありません</dd></div>
+  </dl>
 
-  <h2 style="margin-top:44px">準備中</h2>
+  <button class="btn" id="start">チェックを始める</button>
+</section>
 
-  <div class="soon">
-    <p class="soon__name">つるかめ算</p>
-    <p class="soon__desc">準備ができ次第、ここに公開します。</p>
+<div id="check" class="hidden">
+  <div class="bar"><div class="bar__inner">
+    <div class="bar__track"><div class="bar__fill" id="fill"></div></div>
+    <div class="bar__num"><span id="done">0</span> / <span id="tot">28</span> 回答</div>
+  </div></div>
+  <div class="wrap">
+    <div id="questions"></div>
+    <div class="submit">
+      <button class="btn" id="finish">結果を見る</button>
+      <span class="submit__note hidden" id="missing" role="status" aria-live="polite"></span>
+    </div>
   </div>
-
-  <div class="soon">
-    <p class="soon__name">ドラフト会議</p>
-    <p class="soon__desc">準備ができ次第、ここに公開します。</p>
-  </div>
-
-  <p class="foot">
-    作／DEDラボ 健ちゃん　
-    <a href="https://note.com/vast_daisy3427">note</a>　
-    <a href="https://github.com/digitalemotiondesign-lab">GitHub</a><br>
-    各ツールは自己点検・学習を目的としたもので、専門的な判断や診断を行うものではありません。
-  </p>
 </div>
+
+<div id="result" class="hidden"><div class="wrap">
+  <div class="res__head">
+    <p class="res__label">チェック結果</p>
+    <h2 class="verdict" id="verdict"></h2>
+    <p class="verdict-sub" id="verdictSub"></p>
+
+    <div class="plot" id="plot">
+      <span class="plot__ay">考え方 →</span>
+      <div class="plot__box">
+        <div class="plot__grid">
+          <i class="v"></i><i class="h"></i>
+          <span class="plot__q tl" data-q="0">まだ起きていないが<br>気づけない位置</span>
+          <span class="plot__q tr" data-q="1">広い範囲で<br>見直しが必要</span>
+          <span class="plot__q bl" data-q="2">目立つ問題は<br>見当たらない</span>
+          <span class="plot__q br" data-q="3">ふるまいに<br>現れている</span>
+          <span class="plot__dot" id="dot"></span>
+        </div>
+      </div>
+      <div class="plot__ax"><span>ふるまい →</span><span id="plotNote"></span></div>
+    </div>
+  </div>
+
+  <div class="axes">
+    <div class="axis" id="axAct">
+      <div class="axis__name">ふるまい（15問）</div>
+      <div class="axis__val"><b></b><span></span></div>
+      <div class="axis__track"><div class="axis__fill"></div></div>
+    </div>
+    <div class="axis" id="axCog">
+      <div class="axis__name">考え方（13問）</div>
+      <div class="axis__val"><b></b><span></span></div>
+      <div class="axis__track"><div class="axis__fill"></div></div>
+    </div>
+  </div>
+
+  <div id="graveBox" class="alert hidden"></div>
+
+  <h2 class="sec">章ごとの内訳</h2>
+  <div id="breakdown"></div>
+
+  <h2 class="sec">見直したい項目</h2>
+  <p class="sec-note" id="itemsNote"></p>
+  <div id="items"></div>
+
+  <dl class="after">
+    <dt>相談したいとき</dt>
+    <dd>まず社内のハラスメント相談窓口へ。社内に窓口がない、または窓口自体が信頼できないときは、各都道府県労働局にある「総合労働相談コーナー」で、無料・予約不要で相談できます。</dd>
+    <dt>受けている側かもしれないと感じた方へ</dt>
+    <dd>いつ・どこで・誰が・何をしたかを、その日のうちに記録に残しておいてください。メモ、メール、通話履歴のいずれでもかまいません。記録は、あとで相談するときに最も力になります。</dd>
+    <dt>会社の義務について</dt>
+    <dd>男女雇用機会均等法により、事業主には相談窓口の設置をはじめとする防止措置を講じる義務があります。相談したことを理由とする不利益な取扱いも禁じられています。</dd>
+    <dt>2026年10月1日からの改正について</dt>
+    <dd>改正男女雇用機会均等法により、就職活動中の学生・インターンシップ参加者・応募者など「求職者等」へのセクハラ防止措置が、すべての事業主の義務になります。同日、改正労働施策総合推進法によりカスタマーハラスメント防止措置も義務化されます。いずれも中小企業への猶予はありません。採用に関わる方は、面接・説明会・OB訪問の場面も対象になる前提で読んでください。</dd>
+  </dl>
+
+  <p class="foot">参照：厚生労働省「職場におけるハラスメントの防止のために」／各都道府県労働局の解説<br>
+  基準確認日：2026年9月3日。法令・指針の改正時には見直しが必要です。</p>
+
+  <div class="submit">
+    <button class="btn btn--ghost" id="again">もう一度チェックする</button>
+    <button class="btn btn--ghost" id="print">結果を印刷する</button>
+  </div>
+
+  <p class="foot">このセルフチェックは自己点検を目的とした簡易的なもので、法令上の判断や、個別の事案の評価を行うものではありません。点数が低いことは、過去や現在の言動が問題ないことを意味しません。</p>
+</div></div>
+
+<script>
+/* ============================================================
+   設問データ
+     c … 章の番号
+     w … 重み（1〜3）。3は単独でも判定を引き上げる
+     g … 単独でも重大な問題につながり得る項目
+     o … 設問の出どころ。"筆者" = 独自に追加した設問
+                          "一般" = 公的資料や一般的なチェックシートに基づく設問
+   ============================================================ */
+const CHAPTERS = [
+  {no:"一", title:"ことばのかけ方", axis:"act"},
+  {no:"二", title:"距離と身体接触", axis:"act"},
+  {no:"三", title:"立場と評価",     axis:"act"},
+  {no:"四", title:"よかれと思って", axis:"cog",
+   lead:"ここから先は、していることではなく、考え方を聞きます。「はい」と答えても責められる設問ではありません。むしろ、迷わず「はい」と答えられるものほど、点検の価値があります。"}
+];
+
+const Q = [
+/* ---- 一 ことばのかけ方 ---- */
+{c:0,w:2,o:"一般",t:"「男のくせに」「女性らしく」など、性別を理由にした言い方をすることがある。",
+ a:"性別を前提にした言い方は、本人の意思や事情を無視した評価として受け取られます。「〇〇さん」と、個人として呼びかける言い方に置き換えられます。"},
+{c:0,w:2,o:"一般",t:"相手の容姿・体型・服装について、感想やからかいを口にする。",
+ a:"ほめ言葉のつもりでも、身体を評価の対象にしていることに変わりはありません。仕事の成果に触れたほうが、伝えたい敬意は正確に伝わります。"},
+{c:0,w:2,o:"一般",t:"恋人の有無、結婚や出産の予定を話題にする。",
+ a:"答えたくない事情を抱えている人が多い領域です。雑談として振らない前提でいるほうが安全です。"},
+{c:0,w:1,o:"一般",t:"「ちゃん」付けや愛称で呼ぶなど、相手によって呼び方を変えている。",
+ a:"呼び方を変えることは、対等でない関係の合図になります。全員を同じ敬称でそろえてください。"},
+{c:0,w:2,o:"一般",t:"性的な冗談や下ネタを、場を和ませるつもりで口にする。",
+ a:"その場で笑った人がいたとしても、不快でなかったことを意味しません。話題そのものを職場から外してください。"},
+
+/* ---- 二 距離と身体接触 ---- */
+{c:1,w:3,g:1,o:"一般",t:"肩・背中・髪などに、あいさつや励ましのつもりで触れる。",
+ a:"業務上の必要がない接触は、意図にかかわらずセクハラに当たり得ます。触れないことを原則にしてください。"},
+{c:1,w:2,o:"一般",t:"相手が避けているそぶりを見せても、同じ距離感で接し続ける。",
+ a:"視線をそらす、席を移すといった動きは、言葉にできない拒否の表れです。相手が距離を取ったら、こちらも取ってください。"},
+{c:1,w:2,o:"一般",t:"二人きりの食事や送迎に、断られても改めて誘う。",
+ a:"立場の差がある職場では、誘いを重ねること自体が圧力になります。誘うのは一度までにしてください。"},
+{c:1,w:2,o:"一般",t:"業務時間外に、私的な内容のメッセージを繰り返し送る。",
+ a:"返信しない自由が相手にない状態をつくります。連絡は業務時間内・業務内容に限ってください。"},
+{c:1,w:2,o:"一般",t:"飲み会で、お酌・隣の席・デュエットなどを特定の人に求める。",
+ a:"酒席での役割を特定の人に求めることは、性別役割の押しつけです。席順や進行は、誰かに偏らない形にしてください。"},
+
+/* ---- 三 立場と評価 ---- */
+{c:2,w:3,g:1,o:"一般",t:"誘いに応じるかどうかが、その人への評価や態度に影響している。",
+ a:"応否が処遇に影響することは、対価型のセクシュアルハラスメントに当たります。ただちにやめ、必要であれば自分から相談窓口に相談してください。"},
+{c:2,w:2,o:"一般",t:"部下や後輩の恋愛・私生活について、周囲に話すことがある。",
+ a:"本人の同意がなければプライバシーの侵害です。聞いた話は、自分のところで止めてください。"},
+{c:2,w:2,o:"一般",t:"お茶出し・片付け・受付などを、性別を基準に頼んでいる。",
+ a:"性別を基準にした役割分担は、固定的な性別役割分担意識に基づく慣行であり、配置などにおける男女差別の問題につながることがあります。担当は輪番か役割で決めてください。"},
+{c:2,w:2,o:"一般",t:"育児休業や時短勤務について「男性なのに」「その立場で」と口にしたことがある。",
+ a:"制度の利用を性別や立場で評価する発言は、利用をためらわせる圧力になります。取得は当然の権利として扱ってください。"},
+{c:2,w:3,g:1,o:"一般",t:"本人が公にしていない性的指向や性自認を、他の人に話したことがある。",
+ a:"本人の了解なく性的指向や性自認を他の人に明かす行為はアウティングと呼ばれ、パワーハラスメントに該当する場合があります。事案によってはセクハラにも相当します。すでに話した相手がいる場合は、そこから広がらないよう手を打つ必要があります。"},
+
+/* ---- 四 よかれと思って（考え方） ---- */
+{c:3,w:2,o:"筆者",t:"会社帰りに車で送っていくのは、親切のうちだと思う。",
+ a:"車内は、相手が席を立てない空間です。親切を残したいなら、複数人で乗る、駅までにする、タクシー代を経費で出す、といった形に置き換えられます。断れる形かどうかが分かれ目です。"},
+{c:3,w:2,o:"筆者",t:"昼ごはんや飲み代をおごるのは、男として当然だと思う。",
+ a:"相手によっては、返礼の負担や、次の誘いを断りにくい感覚が生まれることがあります。割り勘にするか、経費で落とすか、その場の全員に同じように出せば、その心配は残りません。"},
+{c:3,w:2,o:"筆者",t:"酒席でお酌をしたり、上司の隣に座ったりする役回りは、自然に決まるものだと思う。",
+ a:"「自然に決まる」の中身は、たいてい性別と年次です。席順をくじか輪番にするだけで、この慣行はなくなります。"},
+{c:3,w:3,g:1,o:"筆者",t:"触れたのが一度だけなら、問題にはならないと思う。",
+ a:"セクハラに当たるかどうかは、回数ではなく、行為の内容と状況を踏まえて判断されます。一度きりであることは、それだけでは問題にならない理由になりません。"},
+{c:3,w:2,o:"筆者",t:"飲みの席での発言は、職場での発言とは分けて考えるべきだと思う。",
+ a:"勤務時間外の酒席でも、職務との関連性、参加者、参加が事実上強制かどうかなどから、実質的に職務の延長とみられる場合は「職場」に含まれます。切り離せる前提でいると、判断を誤ります。"},
+{c:3,w:1,o:"筆者",t:"昔から続いてきた慣習を、今になって問題視するのは行き過ぎだと思う。",
+ a:"慣習として続いてきたということは、誰かが我慢して続けてきたということでもあります。年数は、正当性の根拠になりません。"},
+{c:3,w:2,o:"一般",t:"悩みを抱えている部下の話は、二人きりでゆっくり聞いてやるのがよいと思う。",
+ a:"相談に乗ること自体は必要です。ただ、場所と時間は相手に選んでもらってください。個室や時間外を自分から指定しないだけで、性質が変わります。"},
+{c:3,w:2,o:"一般",t:"誕生日や記念日に個人的な贈り物をするのは、気配りのうちだと思う。",
+ a:"個人宛の贈り物は、相手に返礼の負担や、断りにくさを感じさせることがあります。祝いたいなら、部署単位で、全員に同じものを。"},
+{c:3,w:3,g:1,o:"一般",t:"自分は話しやすい人間なので、相手は嫌なら嫌と言えるはずだと思う。",
+ a:"話しやすいかどうかを判定できるのは、相手だけです。自分を話しやすいと評価している時点で、断られた経験が届いていない可能性があります。"},
+{c:3,w:2,o:"一般",t:"落ち込んでいる相手の肩を叩いて励ますくらいは、人として自然だと思う。",
+ a:"励ましの意図は、接触の必要性をつくりません。言葉で足ります。触れないことを原則にしてください。"},
+{c:3,w:3,g:1,o:"一般",t:"相手が笑っていれば、問題にはなっていないと思う。",
+ a:"笑顔は、立場の弱い側が場を収めるためのふるまいであることがあります。反応ではなく、自分の言動そのもので判断してください。"},
+{c:3,w:3,g:1,o:"一般",t:"抗議されなければ、同意しているものと考えてよいと思う。",
+ a:"沈黙は同意ではありません。抗議しにくい関係であるほど、抗議は起きにくくなります。"},
+{c:3,w:1,o:"一般",t:"同僚の言動が気になっても、当人同士の問題に立ち入るべきではないと思う。",
+ a:"周囲が動かないことは、その職場が行為を許容しているという合図になります。見聞きした人の相談も、事業主の防止措置の一部です。"}
+];
+
+/* 選択肢は軸ごとに変える。前半は頻度を、四章は賛否を聞いているので、
+   同じ「あてはまる」ではどちらも日本語として噛み合わない */
+const OPTSET = {
+  act: [{label:"よくある",  v:2},{label:"ときどきある",v:1},{label:"ない",        v:0}],
+  cog: [{label:"そう思う",  v:2},{label:"ややそう思う",v:1},{label:"そうは思わない",v:0}]
+};
+const optsFor = i => OPTSET[CHAPTERS[Q[i].c].axis];
+
+/* 4象限。索引は quadrant() が返す 0〜3 に対応 */
+const QUAD = [
+  {cls:"lv-2", title:"まだ起きていませんが、気づけない位置にいます",
+   sub:"ふるまいには表れていない一方で、考え方のほうに偏りがあります。この位置がやっかいなのは、線を越えたときに自分では分からないことです。下の項目を、行為ではなく前提として読み直してください。"},
+  {cls:"lv-3", title:"広い範囲で、見直しが必要です",
+   sub:"ふるまいと考え方の両方に点が付いています。すでに我慢している人がいる前提で組み立て直してください。自分だけで抱えず、社内の相談窓口や外部の相談機関に、自分から相談することをおすすめします。"},
+  {cls:"lv-0", title:"目立つ問題は見当たりません",
+   sub:"現時点では、どちらの軸にも大きな偏りはありません。ただしこれは自己申告の結果です。相手からどう見えているかは、周囲の反応を引き続き確かめてください。"},
+  {cls:"lv-3", title:"ふるまいに現れています",
+   sub:"考え方の上では分かっているのに、実際のふるまいには出ています。分かっていることは、やめる理由にはなっても、やめた事実にはなりません。下の項目から手をつけてください。"}
+];
+
+const answers = new Array(Q.length).fill(null);
+const $ = id => document.getElementById(id);
+const IDX = ax => Q.map((q,i) => CHAPTERS[q.c].axis === ax ? i : -1).filter(i => i >= 0);
+const MAXOF = idx => idx.reduce((s,i) => s + Q[i].w * 2, 0);
+
+(function build(){
+  $("tot").textContent = Q.length;
+  const box = $("questions");
+  CHAPTERS.forEach((ch, ci) => {
+    const sec = document.createElement("section");
+    sec.className = "chap";
+    sec.innerHTML = `<div class="chap__head">
+        <span class="chap__no">${ch.no}</span><h2 class="chap__title">${ch.title}</h2></div>
+      ${ch.lead ? `<p class="chap__lead">${ch.lead}</p>` : ""}`;
+    Q.forEach((q, i) => {
+      if (q.c !== ci) return;
+      const d = document.createElement("div");
+      d.className = "q"; d.id = "q" + i;
+      d.innerHTML = `<div class="q__text">
+          <span class="q__no">${i + 1}</span>
+          <span class="q__body" id="qt${i}">${q.t}</span></div>
+        <div class="opts" role="radiogroup" aria-labelledby="qt${i}">${optsFor(i).map((o, oi) => `
+          <span><input type="radio" name="q${i}" id="q${i}_${oi}" value="${o.v}">
+          <label class="opt" for="q${i}_${oi}">${o.label}</label></span>`).join("")}
+        </div>`;
+      sec.appendChild(d);
+    });
+    box.appendChild(sec);
+  });
+  box.addEventListener("change", e => {
+    if (e.target.type !== "radio") return;
+    const i = +e.target.name.slice(1);
+    answers[i] = +e.target.value;
+    $("q" + i).classList.remove("is-missing");
+    progress();
+  });
+})();
+
+function progress(){
+  const n = answers.filter(a => a !== null).length;
+  $("done").textContent = n;
+  $("fill").style.width = (n / Q.length * 100) + "%";
+}
+
+$("start").onclick = () => {
+  $("intro").classList.add("hidden"); $("check").classList.remove("hidden");
+  window.scrollTo(0, 0);
+};
+
+$("finish").onclick = () => {
+  const miss = answers.map((a, i) => a === null ? i : -1).filter(i => i >= 0);
+  if (miss.length) {
+    miss.forEach(i => $("q" + i).classList.add("is-missing"));
+    const note = $("missing");
+    note.textContent = `未回答が${miss.length}問あります`;
+    note.classList.remove("hidden");
+    $("q" + miss[0]).scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  showResult();
+};
+
+$("again").onclick = () => {
+  answers.fill(null);
+  document.querySelectorAll('#questions input').forEach(r => r.checked = false);
+  document.querySelectorAll('.q').forEach(q => q.classList.remove("is-missing"));
+  $("missing").classList.add("hidden");
+  progress();
+  $("result").classList.add("hidden"); $("check").classList.remove("hidden");
+  window.scrollTo(0, 0);
+};
+
+$("print").onclick = () => window.print();
+
+/* 軸ごとの集計。
+   「高」の境目は軸で変える（本チェック独自の目安）。ふるまいは複数回の積み重ねで意味を持つが、
+   考え方は二つ揃った時点で前提が偏っているとみなす。
+   単独でも重大な問題につながり得る項目に点が付いたら、割合に関わらず「高」扱い。 */
+const THRESHOLD = {act:20, cog:12};
+
+function axisScore(ax){
+  const idx = IDX(ax);
+  const score = idx.reduce((s,i) => s + Q[i].w * answers[i], 0);
+  const max = MAXOF(idx);
+  const pct = score / max * 100;
+  const graves = idx.filter(i => Q[i].g && answers[i] > 0);
+  return {score, max, pct, graves, high: pct >= THRESHOLD[ax] || graves.length > 0};
+}
+
+function showResult(){
+  const act = axisScore("act"), cog = axisScore("cog");
+  const qi = act.high ? (cog.high ? 1 : 3) : (cog.high ? 0 : 2);
+  const V = QUAD[qi];
+
+  $("verdict").textContent = V.title;
+  $("verdict").className = "verdict " + V.cls;
+  $("verdictSub").textContent = V.sub;
+
+  // 4象限プロット。軸ごとに閾値が違うので、境界線が常に図の33％に来るよう
+  // 目盛りを折り曲げて配置する。こうしないと図と判定が食い違う
+  const plotPos = (pct, thr) => pct <= thr
+    ? pct / thr * 50
+    : 50 + (pct - thr) / (100 - thr) * 50;
+
+  const plot = $("plot"); plot.className = "plot " + V.cls;
+  plot.querySelectorAll('.plot__q').forEach(el =>
+    el.classList.toggle("on", +el.dataset.q === qi));
+  const dot = $("dot");
+  dot.style.left = Math.min(96, Math.max(3, plotPos(act.pct, THRESHOLD.act))) + "%";
+  dot.style.bottom = Math.min(96, Math.max(3, plotPos(cog.pct, THRESHOLD.cog))) + "%";
+  $("plotNote").textContent = "破線は本チェック独自の目安";
+
+  // 軸ごとの数値
+  [["axAct", act], ["axCog", cog]].forEach(([id, a]) => {
+    const el = $(id); el.className = "axis " + V.cls;
+    el.querySelector("b").textContent = a.score;
+    el.querySelector(".axis__val span").textContent = `/ ${a.max}点（${Math.round(a.pct)}％）`;
+    el.querySelector(".axis__fill").style.width = a.pct + "%";
+  });
+
+  // 単独でも重大な問題につながり得る項目の警告
+  const gb = $("graveBox");
+  const graveAll = act.graves.concat(cog.graves).sort((x, y) => x - y);
+  if (graveAll.length) {
+    gb.innerHTML = `<b>点数にかかわらず、見直しが必要な項目があります。</b><br>
+      設問 ${graveAll.map(i => i + 1).join("・")} は、単独でも重大な問題につながり得る行為、
+      または相手の拒否を見えなくする前提です。「ときどきある」「ややそう思う」であっても、回数の問題ではありません。
+      下の一覧では左端に線を引いてあります。ここから先に手をつけてください。`;
+    gb.classList.remove("hidden");
+  } else { gb.classList.add("hidden"); }
+
+  // 章ごとの内訳
+  $("breakdown").innerHTML = CHAPTERS.map((ch, ci) => {
+    const idx = Q.map((q, i) => q.c === ci ? i : -1).filter(i => i >= 0);
+    const s = idx.reduce((a, i) => a + Q[i].w * answers[i], 0);
+    const max = MAXOF(idx);
+    return `<div class="brk ${V.cls}">
+      <div class="brk__name">${ch.title}</div>
+      <div class="brk__track"><div class="brk__fill" style="width:${s / max * 100}%"></div></div>
+      <div class="brk__num">${s}/${max}</div></div>`;
+  }).join("");
+
+  // 該当項目と対策
+  const flagged = Q.map((q, i) => answers[i] > 0 ? i : -1).filter(i => i >= 0);
+  const wrap = $("items");
+  if (!flagged.length) {
+    $("itemsNote").textContent = "該当した項目はありませんでした。";
+    wrap.innerHTML = "";
+  } else {
+    $("itemsNote").textContent =
+      `点が付いた ${flagged.length} 項目です。やめること自体が目的ではなく、相手が断れる形に置き換えることが目的です。`;
+    wrap.innerHTML = flagged.map(i => `
+      <div class="item ${Q[i].g ? "item--grave" : ""}">
+        <div class="item__q"><span>${i + 1}</span>${Q[i].t}</div>
+        <div class="item__a">${Q[i].a}</div></div>`).join("");
+  }
+
+  $("check").classList.add("hidden"); $("result").classList.remove("hidden");
+  window.scrollTo(0, 0);
+}
+</script>
 </body>
 </html>
