@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEDラボ</title>
+<meta name="description" content="AIと一緒に作った自己点検ツールや学習ツールの置き場です。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://digitalemotiondesign-lab.github.io/">
+<meta property="og:site_name" content="DEDラボ">
+<meta property="og:title" content="DEDラボ">
+<meta property="og:description" content="AIと一緒に作った自己点検ツールや学習ツールの置き場です。">
+<meta property="og:locale" content="ja_JP">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E7E9E3; --card:#FBFBF9;
+  --ink:#1F2528; --ink-2:#5A6462; --ink-3:#8A928F;
+  --rule:#C9CDC4; --rule-soft:#DEE1DA; --indigo:#2F4E63;
+  --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  --mincho:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.9;font-feature-settings:"palt" 1}
+.wrap{max-width:640px;margin:0 auto;padding:64px 22px 96px}
+.kicker{font-size:13px;color:var(--ink-2);letter-spacing:.08em;
+  border-top:2px solid var(--ink);padding-top:12px;display:inline-block}
+h1{font-family:var(--mincho);font-weight:600;font-size:29px;
+  margin:14px 0 26px;letter-spacing:.02em;line-height:1.5}
+.lede{font-size:14px;color:var(--ink-2);max-width:33em;margin:0 0 44px}
+
+h2{font-family:var(--mincho);font-weight:600;font-size:17px;
+  border-bottom:1px solid var(--ink);padding-bottom:9px;margin:0 0 4px}
+
+.tool{display:block;text-decoration:none;color:inherit;
+  padding:22px 0 20px;border-bottom:1px solid var(--rule-soft);
+  transition:background .12s}
+.tool:hover{background:rgba(47,78,99,.05);
+  box-shadow:-14px 0 0 rgba(47,78,99,.05),14px 0 0 rgba(47,78,99,.05)}
+.tool__name{font-family:var(--mincho);font-size:18px;color:var(--indigo);
+  margin:0 0 7px;line-height:1.5}
+.tool__desc{font-size:13.5px;color:var(--ink-2);margin:0}
+.tool__meta{font-size:12px;color:var(--ink-3);margin:8px 0 0}
+
+.soon{padding:22px 0 20px;border-bottom:1px solid var(--rule-soft);color:var(--ink-3)}
+.soon__name{font-family:var(--mincho);font-size:18px;margin:0 0 7px;line-height:1.5}
+.soon__desc{font-size:13.5px;margin:0}
+
+.foot{margin:52px 0 0;padding-top:18px;border-top:1px solid var(--rule);
+  font-size:12px;color:var(--ink-3);line-height:1.9}
+.foot a{color:var(--indigo)}
+@media (max-width:520px){h1{font-size:25px}.wrap{padding-top:48px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">DIGITAL EMOTION DESIGN LAB</p>
+  <h1>DEDラボ</h1>
+  <p class="lede">AIと一緒に作った自己点検ツールや学習ツールを置いています。どれもブラウザの中だけで動きます。入力した内容がどこかに送信されることはありません。</p>
+
+  <h2>公開中</h2>
+
+  <a class="tool" href="./sekuhara/">
+    <p class="tool__name">セクハラ セルフチェック</p>
+    <p class="tool__desc">28問。日ごろのふるまいと、「よかれと思って」の考え方を別々に集計します。行為には出ていないが前提のほうが危ない、という位置を可視化する作りです。</p>
+    <p class="tool__meta">所要7分／厚生労働省の指針を参考にした自己点検</p>
+  </a>
+
+  <!-- 新しいツールを足すときは、上の <a class="tool"> ブロックをコピーして
+       href とテキストを書き換えてください。フォルダを作って index.html を
+       入れるだけで、リンク先が生きます。 -->
+
+  <h2 style="margin-top:44px">準備中</h2>
+
+  <div class="soon">
+    <p class="soon__name">つるかめ算</p>
+    <p class="soon__desc">準備ができ次第、ここに公開します。</p>
+  </div>
+
+  <div class="soon">
+    <p class="soon__name">ドラフト会議</p>
+    <p class="soon__desc">準備ができ次第、ここに公開します。</p>
+  </div>
+
+  <p class="foot">
+    作／DEDラボ 健ちゃん　
+    <a href="https://note.com/vast_daisy3427">note</a>　
+    <a href="https://github.com/digitalemotiondesign-lab">GitHub</a><br>
+    各ツールは自己点検・学習を目的としたもので、専門的な判断や診断を行うものではありません。
+  </p>
+</div>
+</body>
+</html>
