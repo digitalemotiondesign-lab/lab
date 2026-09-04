@@ -10,8 +10,12 @@
 <meta property="og:site_name" content="DEDラボ">
 <meta property="og:title" content="セクハラ セルフチェック — 「悪気はなかった」を点検する">
 <meta property="og:description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化します。回答は端末の外に出ません。">
+<meta property="og:image" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/ogp.png">
 <meta name="twitter:title" content="セクハラ セルフチェック — 「悪気はなかった」を点検する">
 <meta name="twitter:description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化します。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,18 +34,19 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.9;font-feature-settings:"palt" 1}
-.wrap{max-width:640px;margin:0 auto;padding:0 22px 96px}
+.wrap{max-width:640px;margin:0 auto;padding:0 22px calc(160px + env(safe-area-inset-bottom,0px))}
 h1,h2,h3{font-family:var(--mincho);font-weight:600;line-height:1.5;margin:0}
 
-.intro{padding:64px 0 0}
+.intro{padding-top:64px}
 .intro__kicker{font-size:13px;color:var(--ink-2);letter-spacing:.08em;
   border-top:2px solid var(--ink);padding-top:12px;display:inline-block}
 h1{font-size:29px;margin:14px 0 40px;letter-spacing:.02em}
 .lede{font-family:var(--mincho);font-size:22px;line-height:2.05;
   color:var(--indigo);margin:0 0 8px;letter-spacing:.01em}
 .lede em{font-style:normal;border-bottom:2px solid var(--indigo);padding-bottom:2px}
-.lede-note{font-size:13.5px;color:var(--ink-2);margin:18px 0 40px;max-width:33em}
-.facts{border-top:1px solid var(--rule);margin:0 0 36px}
+.lede-note{font-size:13.5px;color:var(--ink-2);margin:18px 0 30px;max-width:33em}
+.about{font-size:13.5px;color:var(--ink-2);margin:44px 0 32px;max-width:33em}
+.facts{border-top:1px solid var(--rule);margin:0}
 .fact{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule-soft)}
 .fact dt{flex:0 0 5.5em;color:var(--ink-2);font-size:13px;margin:0}
 .fact dd{margin:0;font-size:13.5px;flex:1}
@@ -99,10 +104,10 @@ input:checked+.opt{background:var(--indigo);border-color:var(--indigo);color:#ff
   border-left:1px solid var(--ink);border-bottom:1px solid var(--ink)}
 .plot__grid{position:absolute;inset:0}
 .plot__grid i{position:absolute}
-.plot__grid i.v{left:33.33%;top:0;bottom:0;border-left:1px dashed var(--rule)}
-.plot__grid i.h{bottom:33.33%;left:0;right:0;border-top:1px dashed var(--rule)}
+.plot__grid i.v{left:50%;top:0;bottom:0;border-left:1px dashed var(--rule)}
+.plot__grid i.h{bottom:50%;left:0;right:0;border-top:1px dashed var(--rule)}
 .plot__q{position:absolute;font-size:11.5px;color:var(--ink-3);line-height:1.5;
-  padding:8px 9px;max-width:52%}
+  padding:8px 9px;max-width:46%}
 .plot__q.tl{left:0;top:0}.plot__q.tr{right:0;top:0;text-align:right}
 .plot__q.bl{left:0;bottom:0}.plot__q.br{right:0;bottom:0;text-align:right}
 .plot__q.on{color:currentColor;font-weight:700}
@@ -151,7 +156,16 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
 @media (max-width:520px){
   h1{font-size:25px}.lede{font-size:19px}.verdict{font-size:22px}
   .opts{margin-left:0}.brk__name{flex:0 0 6.5em;font-size:12.5px}
-  
+  .q__text{gap:8px}.q__no{min-width:1.2em}
+  .item__q{gap:8px}.item__q span{min-width:1.2em}.item__a{margin-left:1.9em}
+  .plot__q{font-size:10.5px;padding:7px}
+  .plot__ax{font-size:10.5px}
+  .wrap{padding-left:calc(26px + env(safe-area-inset-left,0px));
+        padding-right:calc(26px + env(safe-area-inset-right,0px))}
+  .bar__inner{padding-left:calc(26px + env(safe-area-inset-left,0px));
+              padding-right:calc(26px + env(safe-area-inset-right,0px))}
+  .q.is-missing{box-shadow:-18px 0 0 rgba(126,75,87,.06),18px 0 0 rgba(126,75,87,.06)}
+  .item--grave{margin-left:-17px}
 }
 @media (max-width:420px){
   .opts{grid-template-columns:1fr;gap:5px}
@@ -168,17 +182,18 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
   <h1>セクハラ セルフチェック</h1>
 
   <p class="lede">悪意がなかったことは、<em>問題がなかった証明</em>にはなりません。</p>
-  <p class="lede-note">セクハラに当たるかどうかは、受け手の感じ方を重視しつつ、平均的な労働者の感じ方なども踏まえて、状況ごとに判断されます。つまり、自分の意図だけでは判断できません。<br>前半は日ごろのふるまい、後半は「よかれと思って」の考え方を聞きます。後半に点が付く人は、まだ何も起きていなくても、起きたときに自分では気づけない位置にいます。</p>
+  <p class="lede-note">28問、およそ7分。回答はこの画面の中だけで処理され、こちらから送信・保存することはありません。</p>
+
+  <button class="btn" id="start">チェックを始める</button>
+
+  <p class="about">セクハラに当たるかどうかは、受け手の感じ方を重視しつつ、平均的な労働者の感じ方なども踏まえて、状況ごとに判断されます。つまり、自分の意図だけでは判断できません。<br>
+  前半は日ごろのふるまい、後半は「よかれと思って」の考え方を聞きます。後半に点が付く人は、まだ何も起きていなくても、起きたときに自分では気づけない位置にいます。</p>
 
   <dl class="facts">
-    <div class="fact"><dt>設問</dt><dd>28問、所要およそ7分</dd></div>
     <div class="fact"><dt>結果</dt><dd>ふるまいと考え方を、別々に集計して表示します</dd></div>
-    <div class="fact"><dt>回答</dt><dd>この画面の中だけで処理され、どこにも送信・保存されません</dd></div>
     <div class="fact"><dt>範囲</dt><dd>セクハラを中心に、性別役割の押しつけ、育児休業に関する言動、アウティングなど、関連するハラスメントを含みます</dd></div>
     <div class="fact"><dt>位置づけ</dt><dd>厚生労働省の指針を参考にした自己点検です。配点と判定はこのチェック独自の目安で、公的な判定基準ではありません</dd></div>
   </dl>
-
-  <button class="btn" id="start">チェックを始める</button>
 </section>
 
 <div id="check" class="hidden">
@@ -255,7 +270,8 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
 
   <div class="submit">
     <button class="btn btn--ghost" id="again">もう一度チェックする</button>
-    <button class="btn btn--ghost" id="print">結果を印刷する</button>
+    <button class="btn btn--ghost" id="print">結果を保存する（PDF）</button>
+    <span class="submit__note" style="color:var(--ink-3)">保存・印刷すると、内容は端末やプリンタ側に残ります</span>
   </div>
 
   <p class="foot">このセルフチェックは自己点検を目的とした簡易的なもので、法令上の判断や、個別の事案の評価を行うものではありません。点数が低いことは、過去や現在の言動が問題ないことを意味しません。</p>
@@ -465,8 +481,8 @@ function showResult(){
   // 4象限プロット。軸ごとに閾値が違うので、境界線が常に図の33％に来るよう
   // 目盛りを折り曲げて配置する。こうしないと図と判定が食い違う
   const plotPos = (pct, thr) => pct <= thr
-    ? pct / thr * 33.33
-    : 33.33 + (pct - thr) / (100 - thr) * 66.67;
+    ? pct / thr * 50
+    : 50 + (pct - thr) / (100 - thr) * 50;
 
   const plot = $("plot"); plot.className = "plot " + V.cls;
   plot.querySelectorAll('.plot__q').forEach(el =>
