@@ -18,17 +18,14 @@
 <meta name="twitter:image" content="https://digitalemotiondesign-lab.github.io/lab/sekuhara/ogp.png">
 <meta name="twitter:title" content="セクハラ セルフチェック — 「悪気はなかった」を点検する">
 <meta name="twitter:description" content="28問。ふるまいと考え方を分けて集計し、自分では気づきにくい「よかれと思って」を可視化します。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#E7E9E3; --card:#FBFBF9;
   --ink:#1F2528; --ink-2:#5A6462; --ink-3:#8A928F;
   --rule:#C9CDC4; --rule-soft:#DEE1DA;
   --indigo:#2F4E63; --plum:#7E4B57; --moss:#4A6B54; --ochre:#8A6E2E;
-  --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
-  --mincho:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  --sans:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP","Noto Sans CJK JP",sans-serif;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -182,7 +179,7 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
   <h1>セクハラ セルフチェック</h1>
 
   <p class="lede">悪意がなかったことは、<em>問題がなかった証明</em>にはなりません。</p>
-  <p class="lede-note">28問、およそ7分。回答はこの画面の中だけで処理され、こちらから送信・保存することはありません。</p>
+  <p class="lede-note">28問、およそ7分。回答はこの画面の中だけで処理され、外部に送信されません。</p>
 
   <button class="btn" id="start">チェックを始める</button>
 
@@ -193,6 +190,7 @@ h2.sec{font-size:17px;border-bottom:1px solid var(--ink);padding-bottom:9px;marg
     <div class="fact"><dt>結果</dt><dd>ふるまいと考え方を、別々に集計して表示します</dd></div>
     <div class="fact"><dt>範囲</dt><dd>セクハラを中心に、性別役割の押しつけ、育児休業に関する言動、アウティングなど、関連するハラスメントを含みます</dd></div>
     <div class="fact"><dt>位置づけ</dt><dd>厚生労働省の指針を参考にした自己点検です。配点と判定はこのチェック独自の目安で、公的な判定基準ではありません</dd></div>
+    <div class="fact"><dt>確かめ方</dt><dd>このページは外部と一切通信しません。開いたあとに通信を切っても、最後まで動きます。ソースは<a href="https://github.com/digitalemotiondesign-lab/lab" style="color:var(--indigo)">GitHub</a>で公開しています</dd></div>
   </dl>
 </section>
 
