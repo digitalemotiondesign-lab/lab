@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)file:///C:/Users/digit/Downloads/denwa-demo.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>症状を聞け ― 電話を鳴らすな ― デモ</title>
+<style>
+  :root{
+    --paper:#e8e2d4;
+    --ink:#2a2622;
+    --line:#b9b09b;
+    --hot:#c0392b;
+    --hot-soft:#e07a5f;
+    --bot:#3d7068;
+    --bot-soft:#7fa99f;
+    --amber:#c78a3b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{
+    -webkit-text-size-adjust:100%;text-size-adjust:100%;
+    background:#2f3b39;
+  }
+  html,body{min-height:100%}
+  body.locked{overflow:hidden}
+  body{
+    background:#2f3b39;
+    color:var(--ink);
+    font-family:"Courier New",ui-monospace,monospace;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:26px 20px;
+    padding-left:max(20px, env(safe-area-inset-left));
+    padding-right:max(20px, env(safe-area-inset-right));
+    padding-bottom:max(26px, env(safe-area-inset-bottom));
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(125,169,159,.10), transparent 60%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 1px, transparent 1px 46px);
+  }
+  .desk{
+    width:100%;max-width:760px;
+    box-shadow:0 14px 0 rgba(0,0,0,.22), 0 2px 0 rgba(0,0,0,.3);
+    display:grid;
+    grid-template-columns:1fr 300px;
+    grid-template-rows:auto 1fr auto;
+    gap:0;
+    border:2px solid var(--ink);
+    background:var(--paper);
+  }
+  header{
+    grid-column:1/3;
+    border-bottom:2px solid var(--ink);
+    padding:14px 18px;
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  header h1{
+    font-size:19px;letter-spacing:.16em;font-weight:bold;
+  }
+  header .day{font-size:12px;letter-spacing:.1em;opacity:.7}
+
+  /* stats bar */
+  .stats{
+    grid-column:1/3;
+    border-bottom:2px solid var(--ink);
+    display:grid;grid-template-columns:repeat(3,1fr);
+  }
+  .stat{padding:9px 14px;border-right:1px solid var(--line);text-align:center}
+  .stat:last-child{border-right:none}
+  .stat .n{font-size:22px;font-weight:bold;line-height:1}
+  .stat .l{font-size:10px;letter-spacing:.14em;opacity:.65;margin-top:4px}
+  .stat.bot .n{color:var(--bot)}
+  .stat.me .n{color:var(--hot)}
+
+  /* left: the live desk */
+  .main{
+    padding:16px 18px 18px;
+    min-height:420px;
+    display:flex;flex-direction:column;
+    border-right:2px solid var(--ink);
+  }
+  .stage-label{font-size:11px;letter-spacing:.2em;opacity:.55;margin-bottom:10px}
+
+  /* the phone */
+  .phone{
+    border:2px solid var(--ink);
+    padding:18px 16px;
+    background:#efeadd;
+    position:relative;
+    min-height:190px;
+    display:flex;flex-direction:column;
+  }
+  .phone.ringing{
+    border-color:var(--hot);
+    background:#f3e3df;
+    animation:shake .18s linear infinite;
+    box-shadow:0 0 0 3px rgba(192,57,43,.15);
+  }
+  @keyframes shake{
+    0%,100%{transform:translate(0,0)}
+    25%{transform:translate(-2px,1px)}
+    50%{transform:translate(2px,-1px)}
+    75%{transform:translate(-1px,-1px)}
+  }
+  .phone .ring-tag{
+    position:absolute;top:-11px;left:14px;
+    background:var(--hot);color:#fff;
+    font-size:10px;letter-spacing:.2em;padding:2px 8px;
+    display:none;
+  }
+  .phone.ringing .ring-tag{display:block;animation:blink .6s steps(1) infinite}
+  @keyframes blink{50%{opacity:.35}}
+
+  .caller{font-size:12px;opacity:.6;letter-spacing:.1em;margin-bottom:8px}
+  .say{font-size:17px;line-height:1.5;min-height:52px;font-weight:bold}
+  .say.idle{font-weight:normal;opacity:.4;font-size:14px}
+
+  .qbox{
+    margin-top:10px;font-size:13px;line-height:1.5;
+    border-top:1px dashed var(--line);padding-top:8px;min-height:20px;color:#5a5346;
+    max-height:150px;overflow-y:auto;
+  }
+  .qbox .a{color:var(--ink);font-weight:bold}
+
+  /* actions */
+  .actions{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  button{
+    font-family:inherit;font-size:13px;
+    border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    padding:9px 12px;cursor:pointer;letter-spacing:.05em;
+    transition:transform .05s, background .12s;
+    min-height:44px;                 /* 指で押せる高さ */
+    touch-action:manipulation;       /* ダブルタップ拡大を止める */
+    -webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;user-select:none;
+  }
+  /* hover は本物のマウスがある時だけ。タッチだと色が反転したまま残る */
+  @media (hover:hover) and (pointer:fine){
+    button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+    button.reg:hover{background:var(--bot);color:#fff}
+  }
+  button:active:not(:disabled){transform:translateY(1px);background:var(--ink);color:var(--paper)}
+  button.reg:active:not(:disabled){background:var(--bot);color:#fff}
+  button:disabled{opacity:.3;cursor:default}
+  button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+  button.choice{flex:1;min-width:120px;text-align:left}
+  button.q{background:#e5ddc8;font-size:12px}
+  button.reg{
+    border-color:var(--bot);color:var(--bot);font-weight:bold;
+    letter-spacing:.1em;
+  }
+
+  .feedback{margin-top:10px;font-size:13px;min-height:20px;letter-spacing:.05em}
+  .feedback.bad{color:var(--hot);font-weight:bold}
+  .feedback.good{color:var(--bot);font-weight:bold}
+
+  /* right: the ticker + bot */
+  .side{display:flex;flex-direction:column;background:#ded7c6}
+  .side-h{
+    padding:9px 14px;border-bottom:1px solid var(--line);
+    font-size:11px;letter-spacing:.18em;opacity:.7;
+    display:flex;justify-content:space-between;
+  }
+  .ticker{
+    flex:1;padding:8px;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    display:flex;flex-direction:column-reverse;gap:5px;
+    min-height:180px;
+  }
+  .tick{
+    font-size:11px;padding:5px 8px;border-left:3px solid var(--line);
+    background:#e8e2d4;letter-spacing:.03em;
+    animation:slidein .3s ease;
+  }
+  @keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+  .tick.bot{border-left-color:var(--bot);color:var(--bot)}
+  .tick.me{border-left-color:var(--hot);color:#7a3b32}
+  .tick .t{opacity:.5;font-size:9px}
+
+  .botbox{border-top:1px solid var(--line);padding:10px 14px}
+  .botbox h3{font-size:11px;letter-spacing:.16em;opacity:.7;margin-bottom:8px}
+  .chip{
+    display:inline-block;font-size:10px;padding:3px 7px;margin:0 4px 4px 0;
+    background:var(--bot);color:#fff;letter-spacing:.05em;
+    animation:pop .3s ease;
+  }
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  .chip.empty{background:transparent;color:var(--ink);opacity:.4;border:1px dashed var(--line)}
+
+  footer{
+    grid-column:1/3;border-top:2px solid var(--ink);
+    padding:10px 18px;font-size:11px;letter-spacing:.08em;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .hint{font-style:italic;opacity:.65}
+  .footer-right{display:flex;align-items:center;gap:14px}
+  #clock{opacity:.55}
+  .report-btn{
+    font-family:inherit;font-size:12px;letter-spacing:.06em;
+    border:2px solid var(--bot);background:var(--bot);color:#fff;
+    padding:7px 14px;cursor:pointer;font-weight:bold;
+    animation:btnin .5s ease;
+  }
+  .report-btn:hover{background:#2f574f}
+  @keyframes btnin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* daily report */
+  .report-overlay{
+    position:fixed;inset:0;background:rgba(30,26,22,.55);
+    display:none;justify-content:center;align-items:flex-start;
+    padding:40px 20px;z-index:80;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    padding-bottom:calc(40px + env(safe-area-inset-bottom));
+  }
+  .report-overlay.show{display:flex;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .report{
+    width:100%;max-width:520px;background:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:0 12px 0 rgba(0,0,0,.2);
+    font-family:"Courier New",monospace;color:var(--ink);
+  }
+  .report .r-head{
+    border-bottom:2px solid var(--ink);padding:16px 22px;
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .report .r-head h2{font-size:17px;letter-spacing:.18em}
+  .report .r-head .d{font-size:11px;opacity:.6;letter-spacing:.1em}
+  .report .r-body{padding:18px 22px}
+  .r-row{
+    display:flex;justify-content:space-between;padding:7px 0;
+    border-bottom:1px dashed var(--line);font-size:13px;
+  }
+  .r-row.big{font-size:15px;font-weight:bold;border-bottom:2px solid var(--ink);padding:10px 0}
+  .r-row .v{font-weight:bold}
+  .r-row .v.bot{color:var(--bot)}
+  .r-row .v.me{color:var(--hot)}
+  .r-sub{font-size:12px;opacity:.7;padding:4px 0 4px 14px;display:flex;justify-content:space-between}
+  .r-sec{font-size:11px;letter-spacing:.2em;opacity:.55;margin:16px 0 6px}
+  .r-chip{display:inline-block;font-size:11px;padding:3px 9px;margin:0 5px 5px 0;background:var(--bot);color:#fff}
+  .r-close{
+    font-size:14px;line-height:1.7;padding:18px 22px;border-top:2px solid var(--ink);
+    background:#ded7c6;
+  }
+  .r-close .big{font-size:15px}
+  .report .r-actions{padding:14px 22px;border-top:1px solid var(--line);text-align:right}
+  .report .r-actions button{
+    font-family:inherit;font-size:12px;border:2px solid var(--ink);
+    background:var(--paper);padding:8px 16px;cursor:pointer;
+  }
+  .report .r-actions button:hover{background:var(--ink);color:var(--paper)}
+
+  /* the money shot: PIP overlay */
+  .pip{
+    position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);
+    background:var(--bot);color:#fff;padding:14px 26px;
+    font-size:15px;letter-spacing:.1em;font-weight:bold;
+    border:2px solid #2a4d47;opacity:0;pointer-events:none;
+    box-shadow:0 8px 0 rgba(0,0,0,.15);z-index:50;
+  }
+  .pip.show{animation:pipshow .7s ease forwards}
+  @keyframes pipshow{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}
+    18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+    28%{transform:translate(-50%,-50%) scale(1)}
+    75%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-52%) scale(1)}
+  }
+
+  @media(max-width:680px){
+    body{padding:14px 12px;
+      padding-left:max(12px, env(safe-area-inset-left));
+      padding-right:max(12px, env(safe-area-inset-right));
+      padding-bottom:max(14px, env(safe-area-inset-bottom));}
+    .desk{grid-template-columns:1fr;box-shadow:0 8px 0 rgba(0,0,0,.22)}
+    .main{border-right:none;border-bottom:2px solid var(--ink);min-height:0;padding:14px 14px 16px}
+    .side{min-height:0}
+    header,.stats,.side,footer{grid-column:1/1}
+
+    /* 見出しは折り返す前提にする */
+    header{flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px}
+    header h1{font-size:16px;letter-spacing:.1em;line-height:1.4}
+    header h1 span{margin-left:0;display:block;margin-top:2px}
+
+    .stat{padding:8px 6px}
+    .stat .n{font-size:19px}
+    .stat .l{font-size:9px;letter-spacing:.06em}
+
+    .phone{padding:14px 12px;min-height:0}
+    .say{font-size:16px;min-height:44px}
+    .qbox{max-height:38vh}
+
+    /* 選択肢は縦積み。横に潰れて読めなくなるのを防ぐ */
+    button.choice{flex:1 1 100%;min-width:0}
+    .row{gap:6px}
+    .actions{gap:6px}
+
+    /* ログは高さを決めて、そこだけスクロールさせる */
+    .ticker{min-height:0;max-height:34vh}
+    .side-h{padding:8px 12px}
+    .botbox{padding:10px 12px}
+
+    footer{flex-direction:column;align-items:stretch;gap:8px;padding:10px 14px}
+    .footer-right{justify-content:space-between;width:100%}
+    .report-btn{flex:1;min-height:44px}
+
+    .report-overlay{padding:16px 12px;
+      padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+    .report .r-head{padding:14px 16px}
+    .report .r-body{padding:14px 16px}
+    .r-close{padding:14px 16px;font-size:13.5px}
+    .report .r-actions{padding:12px 16px}
+    .report .r-actions button{width:100%;min-height:44px}
+
+    .pip{font-size:13px;padding:12px 18px;max-width:86vw;text-align:center}
+  }
+
+  @media(max-width:380px){
+    header h1{font-size:15px}
+    .stat .n{font-size:17px}
+    .say{font-size:15px}
+    button{font-size:12.5px;padding:9px 10px}
+    .tick{font-size:10.5px}
+  }
+
+  .report-btn:active:not(:disabled){background:#2f574f;color:#fff}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+    .phone.ringing{box-shadow:0 0 0 3px rgba(192,57,43,.15)}
+    /* アニメで出していたものは、静止状態でも見えるようにする */
+    .pip.show{opacity:1;transform:translate(-50%,-50%)}
+    .report-overlay.show{opacity:1}
+  }
+</style>
+</head>
+<body>
+<div class="desk">
+  <header>
+    <h1>症状を聞け<span style="font-size:11px;letter-spacing:.14em;opacity:.55;font-weight:normal;margin-left:12px">― 電話を鳴らすな ―</span></h1>
+    <span class="day">DEMO ── フェーズ2</span>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="s-total">0</div><div class="l">着信 合計</div></div>
+    <div class="stat bot"><div class="n" id="s-bot">0</div><div class="l">BOT対応</div></div>
+    <div class="stat me"><div class="n" id="s-me">0</div><div class="l">あなた対応</div></div>
+  </div>
+
+  <div class="main">
+    <div class="stage-label" id="stage">■ 机の上</div>
+    <div class="phone" id="phone">
+      <span class="ring-tag">▲ 着信中</span>
+      <div class="caller" id="caller">――</div>
+      <div class="say idle" id="say">静かだ… 次の電話を待っている。</div>
+      <div class="qbox" id="qbox"></div>
+    </div>
+
+    <div class="actions" id="actions"><button onclick="nextCall()">▶ 出社する ── 最初の電話を取る</button></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="side">
+    <div class="side-h"><span>着信ログ</span><span id="pending">9件 待機</span></div>
+    <div class="ticker" id="ticker"></div>
+    <div class="botbox">
+      <h3>チャットボット 登録済</h3>
+      <div id="chips"><span class="chip empty">まだ空っぽ</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="hint" id="hint">原因を特定できた対応だけ、BOTに残せる。</span>
+    <span class="footer-right">
+      <button id="reportBtn" class="report-btn" onclick="showReport()" style="display:none">■ 日報を出して、今日を終える</button>
+      <span id="clock">09:00</span>
+    </span>
+  </footer>
+</div>
+
+<div class="pip" id="pip">ピッ ── BOT対応完了</div>
+
+<div class="report-overlay" id="reportOverlay">
+  <div class="report" id="report"></div>
+</div>
+
+<script>
+/* ---- the call types. each has a hidden "cause" the player must pin down ---- */
+const TYPES = [
+  {
+    id:"pw", label:"パスワード忘れ", caller:"総務課", names:["山本","木村","斉藤"],
+    say:"ログインできません。",
+    // question narrows it. wrong answer without asking = miss
+    q:{ text:"パスワードを忘れましたか？", yes:"はい、思い出せなくて…", key:"pw" },
+    right:"パスワード再設定の手順を案内", 
+    choices:[
+      {t:"パスワードを再設定してください",ok:true},
+      {t:"パソコンを再起動してください",ok:false},
+      {t:"システム担当へ連絡してください",ok:false},
+    ]
+  },
+  {
+    id:"net", label:"ネットワーク障害", caller:"営業部", names:["佐藤","高橋","渡辺"],
+    say:"ネットにつながりません。",
+    q:{ text:"周りの人もつながりませんか？", yes:"隣の席も、みんなダメみたいです", key:"net" },
+    right:"部署全体の障害としてシステム課へ連携",
+    choices:[
+      {t:"部署の通信障害としてエスカレーション",ok:true},
+      {t:"ケーブルを挿し直してください",ok:false},
+      {t:"パスワードを再設定してください",ok:false},
+    ]
+  },
+  {
+    id:"apply", label:"申請の入口が不明", caller:"経理課", names:["田中","中村","小林"],
+    say:"申請ができないんですが。",
+    q:{ text:"申請ボタンが見つからない、ということですか？", yes:"そう、どこにあるのか分からなくて", key:"apply" },
+    right:"申請メニューの場所を案内",
+    choices:[
+      {t:"申請メニューの開き方を案内",ok:true},
+      {t:"再起動してください",ok:false},
+      {t:"パスワードを再設定してください",ok:false},
+    ]
+  },
+];
+
+/* ---- the boss: an outside line. no caller info. must be pinned down in stages. ---- */
+const BOSS = {
+  id:"gaisen", label:"外線・昨日まで動いていた申請",
+  steps:[
+    { q:"どちらの会社の、どなたですか？",
+      a:"「取引先の丸和商事の田中と申します」" },
+    { q:"どのシステムで、何の操作ができないのですか？",
+      a:"「御社の発注ポータルで、発注申請が送れないんです」" },
+    { q:"昨日と今日で、何か変わったことはありませんか？",
+      a:"「そういえば昨日の夕方、御社からシステム更新のメールが来てました」" },
+  ],
+  right:"更新後の発注ポータルの不具合として切り分け、暫定手順を案内",
+  choices:[
+    {t:"システム更新後の不具合として切り分け、暫定手順を案内",ok:true},
+    {t:"パスワードを再設定してください",ok:false},
+    {t:"再起動してください",ok:false},
+  ]
+};
+
+let stats={total:0,bot:0,me:0};
+let registered={};      // id -> true
+let queue=[];           // upcoming calls
+let current=null;       // {type, name, asked:false}
+let minutes=9*60;       // 09:00
+let waveCount=0;
+let bossStep=0;         // how many boss questions have been asked
+let journal=[];        // full record for the daily report: {label, by:'bot'|'me'}
+
+const $=id=>document.getElementById(id);
+
+/* build a wave of incoming calls, weighted so registered ones still appear
+   (so the bot can visibly eat them) */
+function buildWave(){
+  const bag=[];
+  TYPES.forEach(t=>{ bag.push(t,t,t); });
+  // shuffle
+  for(let i=bag.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[bag[i],bag[j]]=[bag[j],bag[i]];}
+  return bag;
+}
+
+function tick(txt,cls){
+  const d=document.createElement("div");
+  d.className="tick "+(cls||"");
+  d.innerHTML=`<span class="t">${clock()} </span>${txt}`;
+  $("ticker").appendChild(d);
+  const tk=$("ticker");
+  while(tk.children.length>9) tk.removeChild(tk.firstChild);
+}
+
+function clock(){
+  const h=(minutes/60|0)%24, m=minutes%60;
+  return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+}
+function advance(n){ minutes+=n; $("clock").textContent=clock(); }
+
+function refreshStats(){
+  $("s-total").textContent=stats.total;
+  $("s-bot").textContent=stats.bot;
+  $("s-me").textContent=stats.me;
+  $("pending").textContent = queue.length? queue.length+"件 待機" : "待機中";
+  // chips (include the boss, which isn't in TYPES)
+  const keys=Object.keys(registered);
+  const lookup=id=> (TYPES.find(x=>x.id===id) || (id===BOSS.id?BOSS:null));
+  $("chips").innerHTML = keys.length
+    ? keys.map(k=>{const t=lookup(k);return t?`<span class="chip">${t.label}</span>`:""}).join("")
+    : `<span class="chip empty">まだ空っぽ</span>`;
+}
+
+function setActions(html){
+  const a=$("actions");
+  a.innerHTML=html;
+  /* スマホだと qbox が伸びてボタンが画面外に落ちる。見える位置まで寄せる */
+  if(window.matchMedia("(max-width:680px)").matches){
+    requestAnimationFrame(()=>a.scrollIntoView({behavior:"smooth",block:"nearest"}));
+  }
+}
+function feedback(txt,cls){ const f=$("feedback"); f.textContent=txt; f.className="feedback "+(cls||""); }
+
+/* pull the next call. registered type -> bot eats it (and auto-chains).
+   unregistered -> it rings and stops for the player. */
+let autoFlow=false;      // once true, bot-absorbed calls keep chaining on their own
+let autoTimer=null;
+
+function nextCall(){
+  feedback("");
+  $("qbox").innerHTML="";
+  if(queue.length===0){
+    waveCount++;
+    if(waveCount>=3){ return startBoss(); }
+    queue=buildWave();
+  }
+  const type=queue.shift();
+  stats.total++;
+  const name = type.names[(Math.random()*type.names.length)|0];
+
+  if(registered[type.id]){
+    // BOT absorbs it — the money shot
+    advance(2);
+    stats.bot++;
+    journal.push({label:type.label, by:'bot'});
+    refreshStats();
+    botAbsorb(type,name);
+    // auto-chain to the next call without a button press
+    autoFlow=true;
+    autoTimer=setTimeout(nextCall, 750);
+    return;
+  }
+
+  // live call — it rings and stops the auto-flow, control returns to player
+  autoFlow=false;
+  advance(3);
+  current={type,name,asked:false};
+  const ph=$("phone");
+  ph.classList.add("ringing");
+  $("caller").textContent=type.caller+"　"+name;
+  const s=$("say"); s.className="say"; s.textContent="「"+type.say+"」";
+  refreshStats();
+  playRing();
+  tick(type.caller+"　"+name+" 着信","me");
+  showLiveActions();
+}
+
+function botAbsorb(type,name){
+  const ph=$("phone");
+  // brief "it's about to ring" flinch, then the bot cuts it off
+  ph.classList.add("ringing");
+  playRing();
+  setTimeout(()=>{
+    ph.classList.remove("ringing");
+    const s=$("say"); s.className="say idle";
+    s.textContent="…鳴りかけて、BOTが取った。";
+    $("caller").textContent="――";
+    tick("BOT対応 完了 ／ "+type.caller+"　"+name,"bot");
+    showPip();
+    playPip();
+  },320);
+  $("hint").textContent="あなたは何もしていない。仕組みが勝手に処理している。";
+  // no button — the flow continues on its own
+  setActions(`<div class="stage-label" style="opacity:.5">…自動処理中</div>`);
+}
+
+function showLiveActions(){
+  const t=current.type;
+  const choices=t.choices.map((c,i)=>
+    `<button class="choice" onclick="answer(${i})">${c.t}</button>`).join("");
+  const qbtn = current.asked ? "" :
+    `<button class="q" onclick="askQ()">？ 質問する ── 原因を特定する</button>`;
+  setActions(`
+    <div class="row">${qbtn}</div>
+    <div class="stage-label" style="margin:4px 0 0">回答を選ぶ:</div>
+    <div class="row">${choices}</div>
+  `);
+}
+
+function askQ(){
+  const t=current.type;
+  current.asked=true;      // cause is now identified → registrable
+  $("qbox").innerHTML=`Q. ${t.q.text}<br><span class="a">A. 「${t.q.yes}」</span>`;
+  feedback("原因が特定できた。これはBOTに残せる。","good");
+  showLiveActions();
+}
+
+function answer(i){
+  const t=current.type;
+  const c=t.choices[i];
+  if(!current.asked && !c.ok){
+    // punished for guessing without asking
+    feedback("「いや、そうじゃなくて！」 ── 情報が足りない。","bad");
+    playBad();
+    return;
+  }
+  if(!c.ok){
+    feedback("外した。質問で原因を絞ってから答えろ。","bad");
+    playBad();
+    return;
+  }
+  // resolved by hand — but was the CAUSE actually identified?
+  $("phone").classList.remove("ringing");
+  stats.me++;
+  journal.push({label:t.label, by:'me'});
+  refreshStats();
+  const s=$("say"); s.textContent="「助かりました、ありがとう」";
+  s.className="say";
+
+  if(current.asked){
+    // cause pinned down → this becomes reusable knowledge
+    feedback("解決。原因まで特定できている。","good");
+    offerRegister(t);
+  }else{
+    // lucky hit → works for this person, but not reusable
+    feedback("解決した。が、なぜ直ったかは分かっていない。","");
+    setActions(`
+      <div class="stage-label" style="margin-bottom:2px;color:var(--hot)">
+        原因が特定されていないため、BOTには登録できない。</div>
+      <div class="row">
+        <button class="q" onclick="askAfter()">？ 今からでも質問して原因を確かめる</button>
+        <button onclick="nextCall()">確かめず次へ ▶</button>
+      </div>
+    `);
+  }
+}
+
+/* let the player recover a lucky hit by asking after the fact */
+function askAfter(){
+  const t=current.type;
+  current.asked=true;
+  $("qbox").innerHTML=`Q. ${t.q.text}<br><span class="a">A. 「${t.q.yes}」</span>`;
+  feedback("原因が特定できた。これでBOTに残せる。","good");
+  offerRegister(t);
+}
+
+function offerRegister(t){
+  if(registered[t.id]){
+    setActions(`<button onclick="nextCall()">次へ ▶</button>`);
+    return;
+  }
+  setActions(`
+    <div class="stage-label" style="margin-bottom:2px">この対応、BOTに残すか？</div>
+    <div class="row">
+      <button class="reg" onclick="register('${t.id}')">＋ 「${t.label}」をBOTに登録する</button>
+      <button onclick="nextCall()">登録せず次へ</button>
+    </div>
+  `);
+}
+
+function register(id){
+  registered[id]=true;
+  const t=TYPES.find(x=>x.id===id);
+  refreshStats();
+  feedback("BOTに登録した。次から同じ電話はBOTが取る。","good");
+  tick("BOTに登録: "+t.label,"bot");
+  playReg();
+  setActions(`<button onclick="nextCall()">次へ ▶</button>`);
+}
+
+/* ---- the boss: outside line after the room has gone quiet ---- */
+function startBoss(){
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  autoFlow=false;
+  $("phone").classList.remove("ringing");
+  $("stage").textContent="■ 静かな職場";
+  $("caller").textContent="――";
+  const s=$("say"); s.className="say idle";
+  s.textContent="電話は、もう鳴らない。しばらく、何も起きない…";
+  $("qbox").innerHTML="";
+  feedback("");
+  $("hint").textContent="自分が作った仕組みが、勝手に回っている。";
+  setActions(`<div class="stage-label" style="opacity:.5">…</div>`);
+  // a real pause, then the outside line
+  setTimeout(bossRing, 2600);
+}
+
+function bossRing(){
+  $("stage").textContent="■ 外線";
+  const ph=$("phone"); ph.classList.add("ringing");
+  $("caller").innerHTML=`<span style="color:var(--hot);font-weight:bold">外線</span>　発信者不明`;
+  const s=$("say"); s.className="say"; s.textContent="プルルル……";
+  playRing(); setTimeout(playRing,700); setTimeout(playRing,1400);
+  tick("外線 着信 ／ 発信者不明","me");
+  bossStep=0;
+  setActions(`<button class="reg" style="border-color:var(--hot);color:var(--hot)" onclick="bossPickup()">電話を取る</button>`);
+}
+
+function bossPickup(){
+  $("caller").innerHTML=`<span style="color:var(--hot);font-weight:bold">外線</span>　発信者不明`;
+  const s=$("say"); s.className="say";
+  s.textContent="「もしもし、昨日まではできてたんですけど、今日できないんですよ。急いでるんですけど」";
+  $("qbox").innerHTML="";
+  // BOT can't help here
+  tick("BOT: 自動対応できません","me");
+  feedback("BOTには手が出せない。誰で、何が起きているのか、何も分からない。","bad");
+  bossActions();
+}
+
+function bossActions(){
+  const done = bossStep>=BOSS.steps.length;
+  if(!done){
+    const step=BOSS.steps[bossStep];
+    setActions(`
+      <div class="stage-label" style="margin-bottom:2px">まだ情報が足りない。順番に聞け。</div>
+      <div class="row"><button class="q" onclick="bossAsk()">？ ${step.q}</button></div>
+    `);
+  }else{
+    // enough info gathered → now the answer choices unlock
+    const choices=BOSS.choices.map((c,i)=>
+      `<button class="choice" onclick="bossAnswer(${i})">${c.t}</button>`).join("");
+    setActions(`
+      <div class="stage-label" style="margin:4px 0 0;color:var(--bot)">正体が見えた。対応を選べ:</div>
+      <div class="row">${choices}</div>
+    `);
+  }
+}
+
+function bossAsk(){
+  const step=BOSS.steps[bossStep];
+  const prev=$("qbox").innerHTML;
+  $("qbox").innerHTML = prev +
+    `<div style="margin-bottom:4px">Q. ${step.q}<br><span class="a">A. ${step.a}</span></div>`;
+  bossStep++;
+  playReg();
+  if(bossStep>=BOSS.steps.length){
+    feedback("ここまで聞けば、切り分けられる。","good");
+  }
+  bossActions();
+}
+
+function bossAnswer(i){
+  const c=BOSS.choices[i];
+  if(!c.ok){
+    feedback("外した。外線は当てずっぽうが効かない。聞いた情報から選べ。","bad");
+    playBad();
+    return;
+  }
+  $("phone").classList.remove("ringing");
+  stats.me++;
+  journal.push({label:"外線（"+BOSS.label+"）", by:'me'});
+  refreshStats();
+  const s=$("say"); s.className="say"; s.textContent="「ああ、助かりました。ありがとうございます」";
+  feedback("解決。誰にも分からなかった一本を、あなたが捌いた。","good");
+  tick("外線 解決 ／ "+BOSS.right,"bot");
+  setActions(`
+    <div class="stage-label" style="margin-bottom:2px">この一本も、BOTに残すか？</div>
+    <div class="row">
+      <button class="reg" onclick="bossRegister()">＋ 「${BOSS.label}」をBOTに登録する</button>
+      <button onclick="settleDay()">登録せず終える</button>
+    </div>
+  `);
+}
+
+function bossRegister(){
+  registered[BOSS.id]=true;
+  refreshStats();
+  feedback("登録した。次に同じ電話が来ても、もう誰も慌てない。","good");
+  tick("BOTに登録: "+BOSS.label,"bot");
+  playReg();
+  setActions(`<button onclick="settleDay()">…そして、また静かになる ▶</button>`);
+}
+
+/* the day is done — the desk goes quiet and the daily-report button appears */
+function settleDay(){
+  if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+  autoFlow=false;
+  $("phone").classList.remove("ringing");
+  $("stage").textContent="■ 定時";
+  $("caller").textContent="――";
+  const s=$("say"); s.className="say idle";
+  s.textContent="電話は、もう鳴らない。今日はここまでだ。";
+  $("qbox").innerHTML="";
+  feedback("");
+  $("hint").textContent="一日を締めよう。日報を出す。";
+  setActions(`<div class="stage-label" style="opacity:.5">─ 業務終了 ─</div>`);
+  const b=$("reportBtn"); b.style.display="inline-block";
+}
+
+/* build the daily report from the journal, then close on the theme */
+function showReport(){
+  // tally by handler and by type
+  const byBot={}, byMe={};
+  journal.forEach(e=>{
+    (e.by==='bot'?byBot:byMe)[e.label]=((e.by==='bot'?byBot:byMe)[e.label]||0)+1;
+  });
+  const total=journal.length;
+  const botN=journal.filter(e=>e.by==='bot').length;
+  const meN=total-botN;
+  const rate = total? Math.round(botN/total*100) : 0;
+
+  const botRows=Object.entries(byBot).map(([k,v])=>
+    `<div class="r-sub"><span>${k}</span><span>${v}件</span></div>`).join("") || `<div class="r-sub"><span>―</span><span>0件</span></div>`;
+  const meRows=Object.entries(byMe).map(([k,v])=>
+    `<div class="r-sub"><span>${k}</span><span>${v}件</span></div>`).join("") || `<div class="r-sub"><span>―</span><span>0件</span></div>`;
+
+  const chips=Object.keys(registered).map(id=>{
+    const t=TYPES.find(x=>x.id===id)||(id===BOSS.id?BOSS:null);
+    return t?`<span class="r-chip">${t.label}</span>`:"";
+  }).join("") || "―";
+
+  $("report").innerHTML=`
+    <div class="r-head"><h2>業務日報</h2><span class="d">${clock()} 終業</span></div>
+    <div class="r-body">
+      <div class="r-row big"><span>本日の着信</span><span class="v">${total}件</span></div>
+      <div class="r-row"><span>BOTが対応</span><span class="v bot">${botN}件</span></div>
+      ${botRows}
+      <div class="r-row"><span>あなたが対応</span><span class="v me">${meN}件</span></div>
+      ${meRows}
+      <div class="r-row"><span>自動対応率</span><span class="v bot">${rate}％</span></div>
+      <div class="r-sec">今日、仕組みに残した知識</div>
+      <div>${chips}</div>
+    </div>
+    <div class="r-close">
+      あなたが残したのは、答えではない。<br>
+      <span class="big">あなたがいなくても、答えにたどり着ける仕組みだった。</span>
+    </div>
+    <div class="r-actions"><button onclick="location.reload()">↻ もう一度はたらく</button></div>
+  `;
+  $("reportOverlay").classList.add("show");
+  document.body.classList.add("locked");   /* 裏の画面が動くのを止める */
+  $("reportOverlay").scrollTop=0;
+}
+
+/* ---- tiny web-audio blips, no assets ---- */
+let actx=null;
+/* iOS は AudioContext が suspended で始まる。タップのたびに起こす */
+function tone(freq,dur,type,vol){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==="suspended") actx.resume();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type||"square";o.frequency.value=freq;
+    g.gain.value=vol||.04;
+    o.connect(g);g.connect(actx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+    o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+function playRing(){ tone(720,.12,"square",.05); setTimeout(()=>tone(720,.12,"square",.05),160);}
+function playPip(){ tone(1180,.08,"sine",.06); }
+function playReg(){ tone(560,.07,"triangle",.05); setTimeout(()=>tone(840,.1,"triangle",.05),80);}
+function playBad(){ tone(180,.18,"sawtooth",.04); }
+
+let pipTimer=null;
+function showPip(){
+  const p=$("pip"); p.classList.remove("show"); void p.offsetWidth; p.classList.add("show");
+  if(pipTimer) clearTimeout(pipTimer);
+  pipTimer=setTimeout(()=>p.classList.remove("show"),900);
+}
+
+/* boot */
+queue=buildWave();
+refreshStats();
+setActions(`<button onclick="nextCall()">▶ 出社する ── 最初の電話を取る</button>`);
+</script>
+
+
+</body></html>
